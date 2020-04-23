@@ -9,7 +9,7 @@
   },
   "keywords": [],
   "author": "Andre Wohnsland <Andre.Wohnsland@sva.de>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "commander": "^5.0.0",
     "eslint-config-prettier": "^6.11.0",
