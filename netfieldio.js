@@ -21,7 +21,7 @@ async function createContainer(apiKey, tagName, containerConfigFile) {
     console.log('- Release:'.padEnd(20), tagName);
     console.log('- Config Container:'.padEnd(20), containerConfigFile);
 
-    let configData = getContainerConfig(containerConfigFile, tagName);
+    let configData = await getContainerConfig(containerConfigFile, tagName);
 
     let responseCreate = await netfieldio.createContainer(apiKey, configData);
 };
@@ -32,8 +32,8 @@ async function createAndDeployContainer(apiKey, tagName, containerConfigFile, de
     console.log('- Config Container:'.padEnd(20), containerConfigFile);
     console.log('- Config Device:'.padEnd(20), deviceConfigFile);
 
-    let configData = getContainerConfig(containerConfigFile, tagName);
-    let containerOption = getDeviceConfig(deviceConfigFile);
+    let configData = await getContainerConfig(containerConfigFile, tagName);
+    let containerOption = await getDeviceConfig(deviceConfigFile);
 
     let responseCreate = await netfieldio.createContainer(apiKey, configData);
     responseCreate = JSON.parse(responseCreate);
@@ -46,7 +46,7 @@ async function deployContainer(apiKey, deviceId, containerId, deviceConfigFile) 
     console.log('- Container:'.padEnd(20), containerId);
     console.log('- Config Path:'.padEnd(20), deviceConfigFile);
 
-    let containerOption = getDeviceConfig(deviceConfigFile);
+    let containerOption = await getDeviceConfig(deviceConfigFile);
 
     let responseCreate = await netfieldio.createDeviceContainer(apiKey, deviceId, containerId, containerOption);
 };
@@ -58,8 +58,8 @@ async function updateAndRedeployContainer(apiKey, deviceId, containerId, tagName
     console.log('- Config Container:'.padEnd(20), containerConfigFile);
     console.log('- Config Device:'.padEnd(20), deviceConfigFile);
 
-    let containerOption = getDeviceConfig(deviceConfigFile);
-    let configData = getContainerConfig(containerConfigFile, tagName);
+    let containerOption = await getDeviceConfig(deviceConfigFile);
+    let configData = await getContainerConfig(containerConfigFile, tagName);
 
     let responseUpdate = await netfieldio.updateContainer(apiKey, containerId, configData);
     let responseDelete = await netfieldio.deleteDeviceContainer(apiKey, deviceId, containerId);
