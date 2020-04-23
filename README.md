@@ -8,7 +8,7 @@ I hereby thank the [SVA](https://www.sva.de) for granting me the possibily to cr
 
 # Usage
 
-`createContainer`
+### createContainer
 ```
 Usage: netfieldio createContainer|cc [options]
 
@@ -25,7 +25,7 @@ Please refer to the docs or the official netfieldio API for the structure of the
 Not needed values should left blank and must not be deleted!
 ```
 
-`createAndDeployContainer`
+### createAndDeployContainer
 ```
 Usage: netfieldio createAndDeployContainer|cdc [options]
 
@@ -45,7 +45,7 @@ Not needed values should left blank and must not be deleted!
 The device config only contains values wich differ from standard container config.
 ```
 
-`deployContainer`
+### deployContainer
 ```
 Usage: netfieldio deployContainer|dc [options]
 
@@ -59,10 +59,11 @@ Options:
   -h, --help            display help for command
 
 Need the apikey, id of the container and the device.
-Please refer to the docs or the official netfieldio API for the structure of the JSON. Only contains values wich differ from standard container config.
+Please refer to the docs or the official netfieldio API for the structure of the JSON. 
+Only contains values wich differ from standard container config.
 ```
 
-`updateAndRedeployContainer`
+### updateAndRedeployContainer
 ```
 Usage: netfieldio updateAndRedeployContainer|udc [options]
 
@@ -97,7 +98,8 @@ There are two different type of config files:
  - configuration file for a specific device container
 
  The configuration file for a container is used for creating und updating this container on the gateway and is always needed with all parameters.
- The configuration file for a specific device container is only needed if some of the container configuration differ from the base container configuration. In addition this config file shall only contain values that differ from the base configuration.
+ The configuration file for a specific device container is only needed if some of the container configuration differ from the base container configuration. 
+ In addition this config file shall only contain values that differ from the base configuration.
 
  Example `container_config.json`:
  ```json
@@ -108,7 +110,10 @@ There are two different type of config files:
     "category": "yourCategory",
     "processorArchitecture": "usedArchitecture ARM x86 ...",
     "organisationId": "yourID",
-    "containerCreateOptions": {},
+    "containerCreateOptions": {
+        "option1": "value1",
+        "option2": "value2"
+    },
     "environmentVariables": [
         {
             "key": "key1",
