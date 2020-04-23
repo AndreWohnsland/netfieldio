@@ -25,10 +25,11 @@ Usage: netfieldio createContainer|cc [options]
 Create a container on the gateway
 
 Options:
-  -k, --key <key>      api key from netfieldio
-  -t, --tag <string>   version tag of the image
-  -o, --config <path>  path to the config.JSON file
-  -h, --help           display help for command
+  -k, --key <key>                 api key from netfieldio
+  -t, --tag <string>              version tag of the image
+  -oc, --config-container <path>  path to the config.JSON file
+  -v, --verbose                   activate rich output/debugging
+  -h, --help                      display help for command
 
 Need the apikey, tag of the image, and a JSON file with all the container options.
 Please refer to the docs or the official netfieldio API for the structure of the JSON.
@@ -47,6 +48,7 @@ Options:
   -d, --device <id>               device id of the device to deploy to
   -oc, --config-container <path>  path to the config.JSON for the container, identical to the create one
   -od, --config-device <path>     path to the config.JSON for the device, can be empty
+  -v, --verbose                   activate rich output/debugging
   -h, --help                      display help for command
 
 Need the apikey, the device id, tag of the image, and a JSON file with all the container options.
@@ -65,11 +67,12 @@ Options:
   -k, --key <key>       api key from netfieldio
   -c, --container <id>  container id of the container to update
   -d, --device <id>     device id of the device to redeploy to
-  -o, --config <path>   path to the config.JSON, only if other parameters than default container options
+  -od, --config-device  path to the config.JSON, only if other parameters than default container options
+  -v, --verbose         activate rich output/debugging
   -h, --help            display help for command
 
 Need the apikey, id of the container and the device.
-Please refer to the docs or the official netfieldio API for the structure of the JSON. 
+Please refer to the docs or the official netfieldio API for the structure of the JSON.
 Only contains values wich differ from standard container config.
 ```
 
@@ -86,6 +89,7 @@ Options:
   -d, --device <id>               device id of the device to redeploy to
   -oc, --config-container <path>  path to the config.JSON for the container, identical to the create one
   -od, --config-device <path>     path to the config.JSON for the device, can be empty
+  -v, --verbose                   activate rich output/debugging
   -h, --help                      display help for command
 
 Need the apikey, url and tag of the image, id of the container and the device.
