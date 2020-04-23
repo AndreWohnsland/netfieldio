@@ -6,6 +6,16 @@ Node.js CLI wrapper for [api.netfield.io](https://api.netfield.io)
 
 I hereby thank the [SVA](https://www.sva.de) for granting me the possibily to create this work and release it as open source. 
 
+- [netfieldio API wrapper](#netfieldio-api-wrapper)
+- [Acknowledgments](#acknowledgments)
+- [Usage](#usage)
+  - [createContainer](#createcontainer)
+  - [createAndDeployContainer](#createanddeploycontainer)
+  - [deployContainer](#deploycontainer)
+  - [updateAndRedeployContainer](#updateandredeploycontainer)
+- [Examples](#examples)
+- [Format of Configs](#format-of-configs)
+
 # Usage
 
 ### createContainer
