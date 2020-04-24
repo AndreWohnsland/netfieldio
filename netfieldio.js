@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { program } = require('commander');
 const pino = require('pino');
 const netfieldio = require('.');
@@ -134,7 +136,7 @@ program
   .requiredOption('-k, --key <key>', 'api key from netfieldio')
   .requiredOption('-c, --container <id>', 'container id of the container to update')
   .requiredOption('-d, --device <id>', 'device id of the device to redeploy to')
-  .option('-od, --config-device', 'path to the config.JSON, only if other parameters than default container options')
+  .option('-od, --config-device <path>', 'path to the config.JSON, only if other parameters than default container options')
   .option('-v, --verbose', 'activate rich output/debugging')
   .action((options) => {
     // logger.info(options);
