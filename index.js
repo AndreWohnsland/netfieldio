@@ -129,6 +129,8 @@ module.exports = {
   },
 
   async getConfigDataFromJson(filePath) {
-    return fs.readFileSync(path.join(__dirname, filePath), 'utf8');
+    // console.log(__dirname);
+    // console.log(path.join(__dirname, '/../..'));
+    return fs.readFileSync(path.join(__dirname, '/../..', filePath), 'utf8');
   },
 };

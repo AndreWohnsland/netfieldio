@@ -11,8 +11,6 @@ Node.js CLI wrapper for [api.netfield.io](https://api.netfield.io)
   - [updateAndRedeployContainer](#updateandredeploycontainer)
 - [Examples](#examples)
 - [Format of Configs](#format-of-configs)
-- [Known Issues](#known-issues)
-  - [CommandNotFoundException](#commandnotfoundexception)
 
 # Acknowledgments
 
@@ -104,7 +102,7 @@ The device config only contains values wich differ from standard container confi
 
 Update an existing container and redeploy it ont the given device with default container configuration:
 ```sh-session
-netfieldio udc -k api_key -c container_id -d device_id -t version_tag -oc /relative/path/to/config.json
+.\node_modules\.bin\netfieldio udc -k api_key -c container_id -d device_id -t version_tag -oc /relative/path/to/config.json
 ```
 
 # Format of Configs
@@ -169,9 +167,3 @@ There are two different type of config files:
 }
 ```
 For further information about the options you can also consult the [netfield.io API](https://api.netfield.io).
-
-# Known Issues
-
-### CommandNotFoundException
-
-When using the netfieldio command in your CLI the command is not found consider installing this module wit the `-g` flag: `npm install -g netfieldio`. This should soulve the error and make the function available for your CLI.
