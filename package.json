@@ -1,8 +1,11 @@
 {
   "name": "netfieldio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "netfieldio": "netfieldio.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "lint": "eslint --ignore-path .eslintignore --max-warnings 0 '*.{js,ts,tsx}'"
