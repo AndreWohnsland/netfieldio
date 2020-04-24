@@ -11,6 +11,8 @@ Node.js CLI wrapper for [api.netfield.io](https://api.netfield.io)
   - [updateAndRedeployContainer](#updateandredeploycontainer)
 - [Examples](#examples)
 - [Format of Configs](#format-of-configs)
+- [Known Issues](#known-issues)
+  - [CommandNotFoundException](#commandnotfoundexception)
 
 # Acknowledgments
 
@@ -167,3 +169,9 @@ There are two different type of config files:
 }
 ```
 For further information about the options you can also consult the [netfield.io API](https://api.netfield.io).
+
+# Known Issues
+
+### CommandNotFoundException
+
+When using the netfieldio command in your CLI the command is not found consider installing this module wit the `-g` flag: `npm install -g netfieldio`. This should soulve the error and make the function available for your CLI.
