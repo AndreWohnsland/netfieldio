@@ -11,14 +11,14 @@ function checkForRightResponse(response) {
   if (response.statusCode >= 400) {
     // throw new Error(`Connection Error. Status Code ${response.statusCode}`);
     // Best practise seems to be 1) use process.exitCode = 1, 2) throw uncaught error
-    console.log(`An Error occured with the Status Code: ${response.statusCode}`);
-    process.exit(1);
+    logger.error(`An Error occured with the Status Code: ${response.statusCode} and the message: ${response.body}`);
+    process.exitCode = 1;
   }
 }
 
 function verbosePrint(verbose, header, response) {
   if (verbose) {
-    logger.info(header + response.body);
+    logger.info(header + response.body + ", status code: " + response.statusCode);
   }
 }
 
