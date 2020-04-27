@@ -79,6 +79,7 @@ module.exports = {
           'Content-Type': 'application/json',
         },
       };
+      
       request(options, (error, response) => {
         if (error) throw reject(new Error(error));
         verbosePrint(verbose, 'Delete Device Container Body: ', response);

@@ -162,10 +162,7 @@ describe("Deleting device container", () => {
         expect(response).to.equal('Container not found');
       });
   });
-  // it("Should throw an error using a wrong url", () => {
-  //   return netfield.deleteDeviceContainer(key_dummy, deviceIdDummy, "wrong/url", false)
-  //     .catch(error => {
-  //       expect(error).to.throw('Invalid url');
-  //     });
-  // });
+  it("Should throw an error using a wrong url", async () => {
+      await expect(() => new netfield.deleteDeviceContainer(key_dummy, deviceIdDummy, "wrong/url", false)).to.throw(Error)
+  });
 });
