@@ -61,7 +61,7 @@ module.exports = {
       };
       // logger.info(options);
       request(options, (error, response) => {
-        if (error) throw reject(new Error(error));
+        if (error) return reject(new Error(error.message));
         verbosePrint(verbose, 'Updated Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);
@@ -79,12 +79,9 @@ module.exports = {
           'Content-Type': 'application/json',
         },
       };
-      
+
       request(options, (error, response) => {
-        if (error) {
-          console.log(error);
-          throw reject(new Error(error));
-        };
+        if (error) return reject(new Error(error.message));
         verbosePrint(verbose, 'Delete Device Container Body: ', response);
         resolve(response.body);
       });
@@ -104,7 +101,7 @@ module.exports = {
 
       };
       request(options, (error, response) => {
-        if (error) console.log(error);
+        if (error) return reject(new Error(error.message));
         verbosePrint(verbose, 'Create Device Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);
@@ -124,7 +121,7 @@ module.exports = {
         formData: createFormdataObject(ContainerCreateOptions),
       };
       request(options, (error, response) => {
-        if (error) throw reject(new Error(error));
+        if (error) return reject(new Error(error.message));
         verbosePrint(verbose, 'Create Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);

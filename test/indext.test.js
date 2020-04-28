@@ -1,6 +1,8 @@
+// disabling logger here
+process.env.LOG_LEVEL = 'silent';
+
 const netfield = require('../index');
 var rewire = require('rewire')
-const assert = require('assert').strict;
 const expect = require('chai').expect;
 const nock = require('nock');
 
@@ -93,7 +95,9 @@ describe("Updating container", () => {
   beforeEach(() => {
     nock(`${baseUrl}/${baseVersion}`)
       .put(`/containers/${containerIdDummy}`)
-      .reply(201, updateResponse);
+      .reply(201, updateResponse)
+      .put(`/containers/wrong/url`)
+      .replyWithError('Invalid url');
   });
   it("Should be able to update a container", () => {
     return netfield.updateContainer(keyDummy, containerIdDummy, option, false)
@@ -105,6 +109,12 @@ describe("Updating container", () => {
         expect(convertedResponse.containerCreateOptions).to.deep.equal({});
       });
   });
+  it("Should throw an error using a wrong url", async () => {
+    return netfield.updateContainer(keyDummy, "wrong/url", option, false)
+      .catch(error => {
+        expect(error.message).to.equal('Invalid url');
+      });
+  });
 });
 
 describe("Creating device container", () => {
@@ -113,7 +123,9 @@ describe("Creating device container", () => {
       .post(`/devices/${deviceIdDummy}/containers/${containerIdDummy}`)
       .reply(201, createDeviceResponse)
       .post(`/devices/${deviceIdDummy}/containers/nonexistingcontainer`)
-      .reply(404, "Container not found");
+      .reply(404, "Container not found")
+      .post(`/devices/${deviceIdDummy}/containers/wrong/url`)
+      .replyWithError('Invalid url');
   });
   it("Should be able to create a device container", () => {
     return netfield.createDeviceContainer(keyDummy, deviceIdDummy, containerIdDummy, containerCreateOptionsDummy, false)
@@ -131,6 +143,12 @@ describe("Creating device container", () => {
       .then(response => {
         expect(typeof response).to.equal('string');
         expect(response).to.equal('Container not found');
+      });
+  });
+  it("Should throw an error using a wrong url", async () => {
+    return netfield.createDeviceContainer(keyDummy, deviceIdDummy, "wrong/url", containerCreateOptionsDummy, false)
+      .catch(error => {
+        expect(error.message).to.equal('Invalid url');
       });
   });
 });
@@ -167,6 +185,9 @@ describe("Deleting device container", () => {
       });
   });
   it("Should throw an error using a wrong url", async () => {
-      await expect(() => new netfield.deleteDeviceContainer(keyDummy, deviceIdDummy, "wrong/url", false)).to.throw(Error)
+    return netfield.deleteDeviceContainer(keyDummy, deviceIdDummy, "wrong/url", false)
+      .catch(error => {
+        expect(error.message).to.equal('Invalid url');
+      });
   });
 });
