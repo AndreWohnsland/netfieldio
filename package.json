@@ -1,7 +1,7 @@
 {
   "name": "netfieldio",
   "version": "1.0.2",
-  "description": "",
+  "description": "Node.js CLI wrapper for api.netfield.io ",
   "main": "index.js",
   "bin": {
     "netfieldio": "netfieldio.js"
@@ -13,6 +13,10 @@
   "keywords": [],
   "author": "Andre Wohnsland <Andre.Wohnsland@sva.de>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndreWohnsland/netfieldio.git"
+  },
   "dependencies": {
     "commander": "^5.0.0",
     "eslint-config-prettier": "^6.11.0",
