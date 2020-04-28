@@ -10,6 +10,10 @@ const createDeviceResponse = require('./mock/createDeviceResponse');
 
 var privateFunctionIndex = rewire('../index.js');
 
+// API URL to mock
+const baseUrl = 'https://api.netfield.io'
+const baseVersion = 'v1'
+
 // option object generated for function testing and api calls
 var option = {};
 option.displayName = "Testcontainer Test";
@@ -31,7 +35,7 @@ option.organisationId = "12345";
 option.registryType = "private";
 option.credentials = {};
 
-const key_dummy = "123456789"
+const keyDummy = "123456789"
 const containerCreateOptionsDummy = '{}'
 const containerIdDummy = "somerandomid"
 const deviceIdDummy = "randomdevice"
@@ -69,12 +73,12 @@ describe("Formdata test", () => {
 
 describe("Creating container", () => {
   beforeEach(() => {
-    nock('https://api.netfield.io')
-      .post('/v1/containers')
+    nock(`${baseUrl}/${baseVersion}`)
+      .post('/containers')
       .reply(201, createResponse);
   });
   it("Should be able to create a container", () => {
-    return netfield.createContainer(key_dummy, option, false)
+    return netfield.createContainer(keyDummy, option, false)
       .then(response => {
         convertedResponse = JSON.parse(response)
         expect(typeof convertedResponse).to.equal('object');
@@ -87,12 +91,12 @@ describe("Creating container", () => {
 
 describe("Updating container", () => {
   beforeEach(() => {
-    nock('https://api.netfield.io')
-      .put(`/v1/containers/${containerIdDummy}`)
+    nock(`${baseUrl}/${baseVersion}`)
+      .put(`/containers/${containerIdDummy}`)
       .reply(201, updateResponse);
   });
   it("Should be able to update a container", () => {
-    return netfield.updateContainer(key_dummy, containerIdDummy, option, false)
+    return netfield.updateContainer(keyDummy, containerIdDummy, option, false)
       .then(response => {
         convertedResponse = JSON.parse(response)
         expect(typeof convertedResponse).to.equal('object');
@@ -105,14 +109,14 @@ describe("Updating container", () => {
 
 describe("Creating device container", () => {
   beforeEach(() => {
-    nock('https://api.netfield.io')
-      .post(`/v1/devices/${deviceIdDummy}/containers/${containerIdDummy}`)
+    nock(`${baseUrl}/${baseVersion}`)
+      .post(`/devices/${deviceIdDummy}/containers/${containerIdDummy}`)
       .reply(201, createDeviceResponse)
-      .post(`/v1/devices/${deviceIdDummy}/containers/nonexistingcontainer`)
+      .post(`/devices/${deviceIdDummy}/containers/nonexistingcontainer`)
       .reply(404, "Container not found");
   });
   it("Should be able to create a device container", () => {
-    return netfield.createDeviceContainer(key_dummy, deviceIdDummy, containerIdDummy, containerCreateOptionsDummy, false)
+    return netfield.createDeviceContainer(keyDummy, deviceIdDummy, containerIdDummy, containerCreateOptionsDummy, false)
       .then(response => {
         convertedResponse = JSON.parse(response)
         expect(typeof convertedResponse).to.equal('object');
@@ -123,7 +127,7 @@ describe("Creating device container", () => {
       });
   });
   it("Should fail creating a non existing container", () => {
-    return netfield.createDeviceContainer(key_dummy, deviceIdDummy, "nonexistingcontainer", containerCreateOptionsDummy, false)
+    return netfield.createDeviceContainer(keyDummy, deviceIdDummy, "nonexistingcontainer", containerCreateOptionsDummy, false)
       .then(response => {
         expect(typeof response).to.equal('string');
         expect(response).to.equal('Container not found');
@@ -133,36 +137,36 @@ describe("Creating device container", () => {
 
 describe("Deleting device container", () => {
   beforeEach(() => {
-    nock('https://api.netfield.io')
-      .delete(`/v1/devices/${deviceIdDummy}/containers/${containerIdDummy}`)
+    nock(`${baseUrl}/${baseVersion}`)
+      .delete(`/devices/${deviceIdDummy}/containers/${containerIdDummy}`)
       .reply(204, "")
-      .delete(`/v1/devices/${deviceIdDummy}/containers/nonexistingcontainer`)
+      .delete(`/devices/${deviceIdDummy}/containers/nonexistingcontainer`)
       .reply(404, "Container not found")
-      .delete(`/v1/devices/${deviceIdDummy}/containers/wrong/url`)
+      .delete(`/devices/${deviceIdDummy}/containers/wrong/url`)
       .replyWithError('Invalid url');
   });
   it("Should be able to delete a device container", () => {
-    return netfield.deleteDeviceContainer(key_dummy, deviceIdDummy, containerIdDummy, false)
+    return netfield.deleteDeviceContainer(keyDummy, deviceIdDummy, containerIdDummy, false)
       .then(response => {
         expect(typeof response).to.equal('string');
         expect(response).to.equal('');
       });
   });
   it("Should be able to delete a device container with verbose mode", () => {
-    return netfield.deleteDeviceContainer(key_dummy, deviceIdDummy, containerIdDummy, true)
+    return netfield.deleteDeviceContainer(keyDummy, deviceIdDummy, containerIdDummy, true)
       .then(response => {
         expect(typeof response).to.equal('string');
         expect(response).to.equal('');
       });
   });
   it("Should fail deleting a non existing container", () => {
-    return netfield.deleteDeviceContainer(key_dummy, deviceIdDummy, "nonexistingcontainer", false)
+    return netfield.deleteDeviceContainer(keyDummy, deviceIdDummy, "nonexistingcontainer", false)
       .then(response => {
         expect(typeof response).to.equal('string');
         expect(response).to.equal('Container not found');
       });
   });
   it("Should throw an error using a wrong url", async () => {
-      await expect(() => new netfield.deleteDeviceContainer(key_dummy, deviceIdDummy, "wrong/url", false)).to.throw(Error)
+      await expect(() => new netfield.deleteDeviceContainer(keyDummy, deviceIdDummy, "wrong/url", false)).to.throw(Error)
   });
 });

@@ -1,6 +1,7 @@
 node_modules
 templates
 .nyc_output
+coverage
 
 .idea/
 .DS_Store

@@ -7,7 +7,7 @@
     "netfieldio": "netfieldio.js"
   },
   "scripts": {
-    "test": "nyc --reporter=text mocha",
+    "test": "nyc --reporter=html --reporter=text mocha",
     "lint": "eslint --ignore-path .eslintignore --max-warnings 0 '*.{js,ts,tsx}'"
   },
   "keywords": [],

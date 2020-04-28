@@ -69,7 +69,7 @@ module.exports = {
     }));
   },
 
-  deleteDeviceContainer(apiKey, deviceId, containerId, verbose=false) {
+  deleteDeviceContainer(apiKey, deviceId, containerId, verbose) {
     return new Promise(((resolve, reject) => {
       const options = {
         method: 'DELETE',
@@ -81,14 +81,17 @@ module.exports = {
       };
       
       request(options, (error, response) => {
-        if (error) throw reject(new Error(error));
+        if (error) {
+          console.log(error);
+          throw reject(new Error(error));
+        };
         verbosePrint(verbose, 'Delete Device Container Body: ', response);
         resolve(response.body);
       });
     }));
   },
 
-  createDeviceContainer(apiKey, deviceId, containerId, containerOption = '{}', verbose=false) {
+  createDeviceContainer(apiKey, deviceId, containerId, containerOption, verbose) {
     return new Promise(((resolve, reject) => {
       const options = {
         method: 'POST',
@@ -101,7 +104,7 @@ module.exports = {
 
       };
       request(options, (error, response) => {
-        if (error) throw reject(new Error(error));
+        if (error) console.log(error);
         verbosePrint(verbose, 'Create Device Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);
@@ -109,7 +112,7 @@ module.exports = {
     }));
   },
 
-  createContainer(apiKey, ContainerCreateOptions, verbose=false) {
+  createContainer(apiKey, ContainerCreateOptions, verbose) {
     return new Promise(((resolve, reject) => {
       const options = {
         method: 'POST',
