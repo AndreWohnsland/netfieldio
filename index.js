@@ -11,14 +11,14 @@ function checkForRightResponse(response) {
   if (response.statusCode >= 400) {
     // throw new Error(`Connection Error. Status Code ${response.statusCode}`);
     // Best practise seems to be 1) use process.exitCode = 1, 2) throw uncaught error
-    console.log(`An Error occured with the Status Code: ${response.statusCode}`);
-    process.exit(1);
+    logger.error(`An Error occured with the Status Code: ${response.statusCode} and the message: ${response.body}`);
+    process.exitCode = 1;
   }
 }
 
 function verbosePrint(verbose, header, response) {
   if (verbose) {
-    logger.info(header + response.body);
+    logger.info(header + response.body + ", status code: " + response.statusCode);
   }
 }
 
@@ -61,7 +61,7 @@ module.exports = {
       };
       // logger.info(options);
       request(options, (error, response) => {
-        if (error) throw reject(new Error(error));
+        if (error) return reject(new Error(error.message));
         verbosePrint(verbose, 'Updated Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);
@@ -69,7 +69,7 @@ module.exports = {
     }));
   },
 
-  deleteDeviceContainer(apiKey, deviceId, containerId, verbose=false) {
+  deleteDeviceContainer(apiKey, deviceId, containerId, verbose) {
     return new Promise(((resolve, reject) => {
       const options = {
         method: 'DELETE',
@@ -79,15 +79,16 @@ module.exports = {
           'Content-Type': 'application/json',
         },
       };
+
       request(options, (error, response) => {
-        if (error) throw reject(new Error(error));
+        if (error) return reject(new Error(error.message));
         verbosePrint(verbose, 'Delete Device Container Body: ', response);
         resolve(response.body);
       });
     }));
   },
 
-  createDeviceContainer(apiKey, deviceId, containerId, containerOption = '{}', verbose=false) {
+  createDeviceContainer(apiKey, deviceId, containerId, containerOption, verbose) {
     return new Promise(((resolve, reject) => {
       const options = {
         method: 'POST',
@@ -100,7 +101,7 @@ module.exports = {
 
       };
       request(options, (error, response) => {
-        if (error) throw reject(new Error(error));
+        if (error) return reject(new Error(error.message));
         verbosePrint(verbose, 'Create Device Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);
@@ -108,7 +109,7 @@ module.exports = {
     }));
   },
 
-  createContainer(apiKey, ContainerCreateOptions, verbose=false) {
+  createContainer(apiKey, ContainerCreateOptions, verbose) {
     return new Promise(((resolve, reject) => {
       const options = {
         method: 'POST',
@@ -120,7 +121,7 @@ module.exports = {
         formData: createFormdataObject(ContainerCreateOptions),
       };
       request(options, (error, response) => {
-        if (error) throw reject(new Error(error));
+        if (error) return reject(new Error(error.message));
         verbosePrint(verbose, 'Create Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);
