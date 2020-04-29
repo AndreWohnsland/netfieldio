@@ -31,7 +31,7 @@ Options:
   -v, --verbose                   activate rich output/debugging
   -h, --help                      display help for command
 
-Need the apikey, tag of the image, and a JSON file with all the container options.
+Need the apikey, tag of the image, and a JSON file with all the container options.    
 Please refer to the docs or the official netfieldio API for the structure of the JSON.
 Not needed values should left blank and must not be deleted!
 ```
@@ -48,6 +48,7 @@ Options:
   -d, --device <id>               device id of the device to deploy to
   -oc, --config-container <path>  path to the config.JSON for the container, identical to the create one
   -od, --config-device <path>     path to the config.JSON for the device, can be empty
+  -f --force                      enforcing deployment of container (deletes existing one)
   -v, --verbose                   activate rich output/debugging
   -h, --help                      display help for command
 
@@ -68,6 +69,7 @@ Options:
   -c, --container <id>         container id of the container to update
   -d, --device <id>            device id of the device to redeploy to
   -od, --config-device <path>  path to the config.JSON, only if other parameters than default container options
+  -f --force                   enforcing deployment of container (deletes existing one)
   -v, --verbose                activate rich output/debugging
   -h, --help                   display help for command
 
@@ -79,6 +81,8 @@ Only contains values wich differ from standard container config.
 ### updateAndRedeployContainer
 ```
 Usage: netfieldio updateAndRedeployContainer|udc [options]
+
+WARNING: Deprecated, use createAndDeployContainer with the --force flag instead. Will removed with v1.2.
 
 Update an existing container, delete and redeploy it to a given device
 
@@ -102,7 +106,7 @@ The device config only contains values wich differ from standard container confi
 
 Update an existing container and redeploy it ont the given device with default container configuration:
 ```sh-session
-.\node_modules\.bin\netfieldio udc -k api_key -c container_id -d device_id -t version_tag -oc /relative/path/to/config.json
+.\node_modules\.bin\netfieldio udc -k api_key -c container_id -d device_id -t version_tag -oc /relative/path/to/config.json/absolute/works/also
 ```
 
 # Format of Configs
