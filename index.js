@@ -151,6 +151,7 @@ module.exports = {
     let offset = 0;
     let containerInfo = [];
     let containerId = null;
+    // let response = null;
     do {
       var options = {
         method: 'GET',
@@ -160,7 +161,13 @@ module.exports = {
           'Content-Type': 'application/json'
         }
       };
-      response = await getContainerResponse(options) 
+      try {
+        response = await getContainerResponse(options);
+      } catch(err) {
+        return new Error(err.message);
+      };
+      checkForRightResponse(response);
+      if (response.statusCode >= 400) return new Error("Invalid request");
       information = JSON.parse(response.body);
       offset = information.pagination.offset;
       total = information.pagination.total;
@@ -179,13 +186,13 @@ module.exports = {
   },
 
   async getConfigDataFromJson(filePath) {
-    // console.log(__dirname);
-    // console.log(path.join(__dirname, '/../..'));
-    if (fs.existsSync(path.join(__dirname, '/../..', filePath))) {
-      return fs.readFileSync(path.join(__dirname, '/../..', filePath), 'utf8');
+    // console.log(filePath);
+    // console.log(path.join('../..', filePath));
+    if (fs.existsSync(path.join(__dirname, '../..', filePath))) {
+      return fs.readFileSync(path.join(__dirname, '../..', filePath), 'utf8');
     } else if (fs.existsSync(path.join(__dirname, filePath))) {
       return fs.readFileSync(path.join(__dirname, filePath), 'utf8');
-    } else if (fs.existsSync(filePath)) {
+    } else if (fs.existsSync(filePath)) { //
       return fs.readFileSync(filePath, 'utf8');
     } else {
       throw new Error('File not found');
