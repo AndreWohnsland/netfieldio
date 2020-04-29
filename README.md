@@ -1,3 +1,5 @@
+![Node.js Package](https://github.com/AndreWohnsland/netfieldio/workflows/Node.js%20Package/badge.svg)
+
 # netfieldio API wrapper
 
 Node.js CLI wrapper for [api.netfield.io](https://api.netfield.io)
