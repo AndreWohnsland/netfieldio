@@ -1,14 +1,17 @@
 // disabling logger here
 process.env.LOG_LEVEL = 'silent';
 
+const path = require('path');
 const netfield = require('../index');
 var rewire = require('rewire')
 const expect = require('chai').expect;
 const nock = require('nock');
+const mock = require('mock-fs');
 
 const createResponse = require('./mock/createResponse');
 const updateResponse = require('./mock/updateResponse');
 const createDeviceResponse = require('./mock/createDeviceResponse');
+const getContainerIdResponse = require('./mock/getContainerIdResponse');
 
 var privateFunctionIndex = rewire('../index.js');
 
@@ -191,3 +194,119 @@ describe("Deleting device container", () => {
       });
   });
 });
+
+describe("Getting container id data", () => {
+  beforeEach(() => {
+    nock(`${baseUrl}/${baseVersion}`)
+      .get('/containers?page=1&limit=50&sortBy=id&sortOrder=asc')
+      .reply(200, getContainerIdResponse);
+  });
+  it("Should be able to get the id of an existing container", () => {
+    return netfield.getContainerId(keyDummy, "Testcontainer Test", false)
+      .then(response => {
+        expect(response).to.equal("somerandomid");
+      });
+  });
+  it("Should be able to get the id of another existing container with verbose mode", () => {
+    return netfield.getContainerId(keyDummy, "Testcontainer Test2", true)
+      .then(response => {
+        expect(response).to.equal("someotherrandomid");
+      });
+  });
+  it("Should return null if the container does not exists", () => {
+    return netfield.getContainerId(keyDummy, "Non existing container", false)
+      .then(response => {
+        expect(response).to.equal(null);
+      });
+  });
+});
+
+describe("Testing getting container id data with invalid request", () => {
+  beforeEach(() => {
+    nock(`${baseUrl}/${baseVersion}`, {
+      reqheaders: {
+        Authorization: "wrongKey",
+      },
+    })
+      .get('/containers?page=1&limit=50&sortBy=id&sortOrder=asc')
+      .replyWithError('Invalid url');
+  });
+  it("Should throw an error if the url is invalid", () => {
+    return netfield.getContainerId("wrongKey", "Testcontainer Test", false)
+      .catch(error => {
+        expect(error.message).to.equal('Invalid url');
+      });
+  });
+});
+
+describe("Testing with invalid key", () => {
+  beforeEach(() => {
+    nock(`${baseUrl}/${baseVersion}`, {
+      reqheaders: {
+        Authorization: "wrongKey",
+      },
+    })
+      .get('/containers?page=1&limit=50&sortBy=id&sortOrder=asc')
+      .reply(401, "Invalid Token");
+  });
+  it("Should throw an error if the header/key is invalid", () => {
+    return netfield.getContainerId("wrongKey", "Testcontainer Test", false)
+      .catch(error => {
+        expect(error.message).to.equal('Invalid request');
+      });
+  });
+});
+
+mock({
+  'path/to/fake/dir': {
+    'some-file.txt': 'file content here',
+    'empty-dir': {/** empty directory */ }
+  },
+});
+
+describe("Testing the file load function", () => {
+  before(() => {
+    mock({
+      'path/to/fake/dir': {
+        'config.json': '{"data": "test"}',
+        'empty-dir': {/** empty directory */ }
+      }
+    });
+  });
+  after(() => {
+    mock.restore();
+  });
+  it("Should be able to load relative paths", () => {
+    return netfield.getConfigDataFromJson('path/to/fake/dir/config.json')
+      .then(data => {
+        expect(data).to.equal('{"data": "test"}');
+      });
+  });
+  // this still needs to be implemented. The path behaviur can not be recreated ...
+  // it("Should be able to load relative paths with the node_js/.bin/ fix for deployed packages", () => {
+  //   return netfield.getConfigDataFromJson('/path/to/fake/dir/config_npm.json')
+  //     .then(data => {
+  //       expect(data).to.equal('{"data": "test2"}');
+  //     });
+  // });
+  // it("Should be able to load absolute paths", () => {
+  //   filepath = path.join(__dirname, '/path/to/fake/dir/config.json');
+  //   return netfield.getConfigDataFromJson(filepath)
+  //     .then(data => {
+  //       expect(data).to.equal('{"data": "test"}');
+  //     }); 
+  // });
+  it("Should throw an error if the file does not exists", () => {
+    return netfield.getConfigDataFromJson('path/to/fake/dir/notexisting.json')
+      .catch(error => {
+        expect(error.message).to.equal('File not found');
+      });
+  });
+  it("Should throw an error if the Path is wrong", () => {
+    return netfield.getConfigDataFromJson('path/wrong/path/dir/config.json')
+      .catch(error => {
+        expect(error.message).to.equal('File not found');
+      });
+  });
+});
+

@@ -1,0 +1,61 @@
+module.exports = {
+  "pagination": {
+    "offset": 0,
+    "limit": 50,
+    "total": 2
+  },
+  "containers": [
+    {
+      id: "somerandomid",
+      organisationId: 12345,
+      containerType: "private",
+      sharedOrganisationList: [],
+      displayName: "Testcontainer Test",
+      containerName: "testcontainer-test",
+      image: "",
+      icon: "",
+      type: "docker",
+      version: "1",
+      restartPolicy: "always",
+      desiredStatus: "running",
+      imageUri: "www.uritotheimage.com:tag-1",
+      registryType: "private",
+      credentials: {},
+      category: "cat",
+      processorArchitecture: "ARM",
+      shortDescription: " ",
+      description: " ",
+      containerCreateOptions: {},
+      containerTwinDesiredOptions: {},
+      environmentVariables: [],
+      deployedAt: "",
+      mqttTopics: []
+    },
+    {
+      id: "someotherrandomid",
+      organisationId: 12345,
+      containerType: "private",
+      sharedOrganisationList: [],
+      displayName: "Testcontainer Test2",
+      containerName: "testcontainer-test2",
+      image: "",
+      icon: "",
+      type: "docker",
+      version: "1",
+      restartPolicy: "always",
+      desiredStatus: "running",
+      imageUri: "www.uritotheimage.com:tag-2",
+      registryType: "private",
+      credentials: {},
+      category: "cat",
+      processorArchitecture: "x86",
+      shortDescription: " ",
+      description: " ",
+      containerCreateOptions: {},
+      containerTwinDesiredOptions: {},
+      environmentVariables: [],
+      deployedAt: "",
+      mqttTopics: []
+    }
+  ]
+}
