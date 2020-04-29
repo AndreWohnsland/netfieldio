@@ -16,10 +16,25 @@ function checkForRightResponse(response) {
   }
 }
 
-function verbosePrint(verbose, header, response) {
+function verboseResponsePrint(verbose, header, response) {
   if (verbose) {
     logger.info(header + response.body + ", status code: " + response.statusCode);
   }
+}
+
+function verbosePrint(verbose, message) {
+  if (verbose) {
+    logger.info(message)
+  }
+}
+
+function getContainerResponse(options) {
+  return new Promise(((resolve, reject) => { 
+    request(options, function (error, response) {
+      if (error) return reject(new Error(error.message));
+      resolve(response);
+    });
+  }))
 }
 
 
@@ -62,7 +77,7 @@ module.exports = {
       // logger.info(options);
       request(options, (error, response) => {
         if (error) return reject(new Error(error.message));
-        verbosePrint(verbose, 'Updated Container Body: ', response);
+        verboseResponsePrint(verbose, 'Updated Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);
       });
@@ -82,7 +97,7 @@ module.exports = {
 
       request(options, (error, response) => {
         if (error) return reject(new Error(error.message));
-        verbosePrint(verbose, 'Delete Device Container Body: ', response);
+        verboseResponsePrint(verbose, 'Delete Device Container Body: ', response);
         resolve(response.body);
       });
     }));
@@ -102,7 +117,7 @@ module.exports = {
       };
       request(options, (error, response) => {
         if (error) return reject(new Error(error.message));
-        verbosePrint(verbose, 'Create Device Container Body: ', response);
+        verboseResponsePrint(verbose, 'Create Device Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);
       });
@@ -122,16 +137,58 @@ module.exports = {
       };
       request(options, (error, response) => {
         if (error) return reject(new Error(error.message));
-        verbosePrint(verbose, 'Create Container Body: ', response);
+        verboseResponsePrint(verbose, 'Create Container Body: ', response);
         checkForRightResponse(response);
         resolve(response.body);
       });
     }));
   },
 
+  async getContainerId(apiKey, containerName, verbose) {
+    const limit = 50;
+    let page = 1;
+    let total = 0;
+    let offset = 0;
+    let containerInfo = [];
+    let containerId = null;
+    do {
+      var options = {
+        method: 'GET',
+        url: `${apiBaseUrl}/${apiVersion}/containers?page=${page}&limit=${limit}&sortBy=id&sortOrder=asc`,
+        headers: {
+          Authorization: apiKey,
+          'Content-Type': 'application/json'
+        }
+      };
+      response = await getContainerResponse(options) 
+      information = JSON.parse(response.body);
+      offset = information.pagination.offset;
+      total = information.pagination.total;
+      containerInfo.push(...information.containers)
+      page += 1;
+    } while (offset + limit < total);
+
+    for (let data of containerInfo) {
+      if (data.displayName === containerName) {
+        verbosePrint(verbose, `Container found for name: ${containerName}, id is: ${data.id}`)
+        return data.id;
+      };
+    };
+    verbosePrint(verbose, `Container not found for name: ${containerName}`)
+    return containerId;
+  },
+
   async getConfigDataFromJson(filePath) {
     // console.log(__dirname);
     // console.log(path.join(__dirname, '/../..'));
-    return fs.readFileSync(path.join(__dirname, '/../..', filePath), 'utf8');
+    if (fs.existsSync(path.join(__dirname, '/../..', filePath))) {
+      return fs.readFileSync(path.join(__dirname, '/../..', filePath), 'utf8');
+    } else if (fs.existsSync(path.join(__dirname, filePath))) {
+      return fs.readFileSync(path.join(__dirname, filePath), 'utf8');
+    } else if (fs.existsSync(filePath)) {
+      return fs.readFileSync(filePath, 'utf8');
+    } else {
+      throw new Error('File not found');
+    }
   },
 };
