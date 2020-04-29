@@ -33,9 +33,10 @@ program
   .requiredOption('-d, --device <id>', 'device id of the device to deploy to')
   .requiredOption('-oc, --config-container <path>', 'path to the config.JSON for the container, identical to the create one')
   .option('-od, --config-device <path>', 'path to the config.JSON for the device, can be empty')
+  .option('-f --force', 'enforcing deployment of container (deletes existing one)')
   .option('-v, --verbose', 'activate rich output/debugging')
   .action((options) => {
-    netfieldio.createAndDeployContainer(options.key, options.tag, options.configContainer, options.configDevice, options.device, options.verbose);
+    netfieldio.createAndDeployContainer(options.key, options.tag, options.configContainer, options.configDevice, options.device, options.force, options.verbose);
   })
   .on('--help', () => {
     console.log('\nNeed the apikey, the device id, tag of the image, and a JSON file with all the container options.');
@@ -52,9 +53,10 @@ program
   .requiredOption('-c, --container <id>', 'container id of the container to update')
   .requiredOption('-d, --device <id>', 'device id of the device to redeploy to')
   .option('-od, --config-device <path>', 'path to the config.JSON, only if other parameters than default container options')
+  .option('-f --force', 'enforcing deployment of container (deletes existing one)')
   .option('-v, --verbose', 'activate rich output/debugging')
   .action((options) => {
-    netfieldio.deployContainer(options.key, options.device, options.container, options.configDevice, options.verbose);
+    netfieldio.deployContainer(options.key, options.device, options.container, options.configDevice, options.force, options.verbose);
   })
   .on('--help', () => {
     console.log('\nNeed the apikey, id of the container and the device.');
@@ -62,6 +64,7 @@ program
     console.log('Only contains values wich differ from standard container config.\n');
   });
 
+// deprecated -> use createAndDeploy with the --force flag instead
 program
   .command('updateAndRedeployContainer')
   .alias('udc')
