@@ -1,4 +1,4 @@
-![build](https://github.com/AndreWohnsland/netfieldio/workflows/Node.js%20Package/badge.svg) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![build](https://github.com/AndreWohnsland/netfieldio/workflows/Node.js%20Package/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # netfieldio API wrapper
 
