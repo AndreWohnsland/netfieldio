@@ -1,8 +1,10 @@
-![build](https://github.com/AndreWohnsland/netfieldio/workflows/Node.js%20Package/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 # netfieldio API wrapper
 
-Node.js CLI wrapper for [api.netfield.io](https://api.netfield.io)
+![build](https://github.com/AndreWohnsland/netfieldio/workflows/Node.js%20Package/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![codecov](https://codecov.io/gh/AndreWohnsland/netfieldio/branch/master/graph/badge.svg)](https://codecov.io/gh/AndreWohnsland/netfieldio)
+
+#### Node.js CLI wrapper for [api.netfield.io](https://api.netfield.io)
 
 - [netfieldio API wrapper](#netfieldio-api-wrapper)
 - [Acknowledgments](#acknowledgments)

@@ -2,6 +2,8 @@ node_modules
 templates
 .nyc_output
 coverage
+coverage.lcov
+codecov.yml
 
 .idea/
 .DS_Store
