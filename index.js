@@ -18,25 +18,24 @@ function checkForRightResponse(response) {
 
 function verboseResponsePrint(verbose, header, response) {
   if (verbose) {
-    logger.info(header + response.body + ", status code: " + response.statusCode);
+    logger.info(header + response.body + ', status code: ' + response.statusCode);
   }
 }
 
 function verbosePrint(verbose, message) {
   if (verbose) {
-    logger.info(message)
+    logger.info(message);
   }
 }
 
 function getContainerResponse(options) {
-  return new Promise(((resolve, reject) => { 
+  return new Promise((resolve, reject) => {
     request(options, function (error, response) {
       if (error) return reject(new Error(error.message));
       resolve(response);
     });
-  }))
+  });
 }
-
 
 function createFormdataObject(ContainerCreateOptions) {
   return {
@@ -65,7 +64,7 @@ function createFormdataObject(ContainerCreateOptions) {
 
 module.exports = {
   updateContainer(apiKey, containerId, ContainerCreateOptions, verbose) {
-    return new Promise(((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const options = {
         method: 'PUT',
         url: `${apiBaseUrl}/${apiVersion}/containers/${containerId}`,
@@ -81,11 +80,11 @@ module.exports = {
         checkForRightResponse(response);
         resolve(response.body);
       });
-    }));
+    });
   },
 
   deleteDeviceContainer(apiKey, deviceId, containerId, verbose) {
-    return new Promise(((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const options = {
         method: 'DELETE',
         url: `${apiBaseUrl}/${apiVersion}/devices/${deviceId}/containers/${containerId}`,
@@ -100,11 +99,11 @@ module.exports = {
         verboseResponsePrint(verbose, 'Delete Device Container Body: ', response);
         resolve(response.body);
       });
-    }));
+    });
   },
 
   createDeviceContainer(apiKey, deviceId, containerId, containerOption, verbose) {
-    return new Promise(((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const options = {
         method: 'POST',
         url: `${apiBaseUrl}/${apiVersion}/devices/${deviceId}/containers/${containerId}`,
@@ -113,7 +112,6 @@ module.exports = {
           Authorization: apiKey,
         },
         body: containerOption,
-
       };
       request(options, (error, response) => {
         if (error) return reject(new Error(error.message));
@@ -121,11 +119,11 @@ module.exports = {
         checkForRightResponse(response);
         resolve(response.body);
       });
-    }));
+    });
   },
 
   createContainer(apiKey, ContainerCreateOptions, verbose) {
-    return new Promise(((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const options = {
         method: 'POST',
         url: `${apiBaseUrl}/${apiVersion}/containers`,
@@ -141,7 +139,7 @@ module.exports = {
         checkForRightResponse(response);
         resolve(response.body);
       });
-    }));
+    });
   },
 
   async getContainerId(apiKey, containerName, verbose) {
@@ -158,30 +156,30 @@ module.exports = {
         url: `${apiBaseUrl}/${apiVersion}/containers?page=${page}&limit=${limit}&sortBy=id&sortOrder=asc`,
         headers: {
           Authorization: apiKey,
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       };
       try {
         response = await getContainerResponse(options);
-      } catch(err) {
+      } catch (err) {
         return new Error(err.message);
-      };
+      }
       checkForRightResponse(response);
-      if (response.statusCode >= 400) return new Error("Invalid request");
+      if (response.statusCode >= 400) return new Error('Invalid request');
       information = JSON.parse(response.body);
       offset = information.pagination.offset;
       total = information.pagination.total;
-      containerInfo.push(...information.containers)
+      containerInfo.push(...information.containers);
       page += 1;
     } while (offset + limit < total);
 
     for (let data of containerInfo) {
       if (data.displayName === containerName) {
-        verbosePrint(verbose, `Container found for name: ${containerName}, id is: ${data.id}`)
+        verbosePrint(verbose, `Container found for name: ${containerName}, id is: ${data.id}`);
         return data.id;
-      };
-    };
-    verbosePrint(verbose, `Container not found for name: ${containerName}`)
+      }
+    }
+    verbosePrint(verbose, `Container not found for name: ${containerName}`);
     return containerId;
   },
 
@@ -192,7 +190,8 @@ module.exports = {
       return fs.readFileSync(path.join(__dirname, '../..', filePath), 'utf8');
     } else if (fs.existsSync(path.join(__dirname, filePath))) {
       return fs.readFileSync(path.join(__dirname, filePath), 'utf8');
-    } else if (fs.existsSync(filePath)) { //
+    } else if (fs.existsSync(filePath)) {
+      //
       return fs.readFileSync(filePath, 'utf8');
     } else {
       throw new Error('File not found');
