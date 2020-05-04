@@ -112,7 +112,7 @@ The device config only contains values wich differ from standard container confi
 
 # Examples
 
-Update an existing container and redeploy it ont the given device with default container configuration:
+Update an existing container and redeploy it on the given device with default container configuration:
 
 ```sh-session
 .\node_modules\.bin\netfieldio cdc -k api_key -d device_id -t version_tag -oc /relative/path/to/config.json/absolute/works/also -f -v
