@@ -8,6 +8,8 @@ const expect = require('chai').expect;
 const nock = require('nock');
 const mock = require('mock-fs');
 
+const fs = require('fs');
+
 const createResponse = require('./mock/createResponse');
 const updateResponse = require('./mock/updateResponse');
 const createDeviceResponse = require('./mock/createDeviceResponse');
@@ -248,7 +250,7 @@ describe('Testing the base funktion of the package', () => {
   });
 
   describe('Testing the file load function', () => {
-    before(() => {
+    beforeEach(() => {
       mock({
         'path/to/fake/dir': {
           'config.json': '{"data": "test"}',
@@ -256,9 +258,12 @@ describe('Testing the base funktion of the package', () => {
             /** empty directory */
           },
         },
+        '../../path/to/fake/dir': {
+          'config_npm.json': '{"data": "test2"}',
+        },
       });
     });
-    after(() => {
+    afterEach(() => {
       mock.restore();
     });
     it('Should be able to load relative paths', () => {
@@ -266,20 +271,17 @@ describe('Testing the base funktion of the package', () => {
         expect(data).to.equal('{"data": "test"}');
       });
     });
-    // this still needs to be implemented. The path behaviur can not be recreated ...
-    // it("Should be able to load relative paths with the node_js/.bin/ fix for deployed packages", () => {
-    //   return netfield.getConfigDataFromJson('/path/to/fake/dir/config_npm.json')
-    //     .then(data => {
-    //       expect(data).to.equal('{"data": "test2"}');
-    //     });
-    // });
-    // it("Should be able to load absolute paths", () => {
-    //   filepath = path.join(__dirname, '/path/to/fake/dir/config.json');
-    //   return netfield.getConfigDataFromJson(filepath)
-    //     .then(data => {
-    //       expect(data).to.equal('{"data": "test"}');
-    //     });
-    // });
+    it('Should be able to load relative paths with the node_js/.bin/ fix for deployed packages', () => {
+      return netfield.getConfigDataFromJson('/path/to/fake/dir/config_npm.json').then((data) => {
+        expect(data).to.equal('{"data": "test2"}');
+      });
+    });
+    it('Should be able to load absolute paths', () => {
+      filepath = path.join(__dirname, '..', '/path/to/fake/dir/config.json');
+      return netfield.getConfigDataFromJson(filepath).then((data) => {
+        expect(data).to.equal('{"data": "test"}');
+      });
+    });
     it('Should throw an error if the file does not exists', () => {
       return netfield.getConfigDataFromJson('path/to/fake/dir/notexisting.json').catch((error) => {
         expect(error.message).to.equal('File not found');
