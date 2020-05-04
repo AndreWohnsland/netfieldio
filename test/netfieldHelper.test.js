@@ -22,22 +22,26 @@ const baseUrl = 'https://api.netfield.io';
 const baseVersion = 'v1';
 
 const keyDummy = '123456789';
-const containerCreateOptionsDummy = '{}';
 const containerIdDummy = 'somerandomid';
 const deviceIdDummy = 'randomdevice';
 const displayNameDummy = 'Testcontainer Test';
 const tagNameDummy = 'tag-1';
+const realContainerIdDummy = 'aaaaaaaa-1111-11aa-22ss-123456789alf';
 
 describe('Testing the Helper Functions which combine multiple index.js ones', () => {
   beforeEach(() => {
     nock(`${baseUrl}/${baseVersion}`)
       .delete(`/devices/${deviceIdDummy}/containers/${containerIdDummy}`)
       .reply(204, '')
+      .delete(`/devices/${deviceIdDummy}/containers/${realContainerIdDummy}`)
+      .reply(204, '')
       .post('/containers')
       .reply(201, createResponse)
       .put(`/containers/${containerIdDummy}`)
       .reply(201, updateResponse)
       .post(`/devices/${deviceIdDummy}/containers/${containerIdDummy}`)
+      .reply(201, createDeviceResponse)
+      .post(`/devices/${deviceIdDummy}/containers/${realContainerIdDummy}`)
       .reply(201, createDeviceResponse)
       .post(`/devices/${deviceIdDummy + '_exist'}/containers/${containerIdDummy}`)
       .reply(400, 'Container already exists!')
@@ -168,7 +172,7 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
   describe('deployContainer', () => {
     it('Should be able to deploy a non existing container', () => {
       return netfield
-        .deployContainer(keyDummy, deviceIdDummy, containerIdDummy, undefined, false, false)
+        .deployContainer(keyDummy, deviceIdDummy, realContainerIdDummy, undefined, false, false)
         .then((response) => {
           convertedResponse = JSON.parse(response);
           expect(typeof convertedResponse).to.equal('object');
@@ -177,7 +181,7 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
     });
     it('Should be able to deploy an existing container with force', () => {
       return netfield
-        .deployContainer(keyDummy, deviceIdDummy, containerIdDummy, undefined, true, false)
+        .deployContainer(keyDummy, deviceIdDummy, realContainerIdDummy, undefined, true, false)
         .then((response) => {
           convertedResponse = JSON.parse(response);
           expect(typeof convertedResponse).to.equal('object');
@@ -186,7 +190,7 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
     });
     it('Should be able to deploy a non existing container in verbose', () => {
       return netfield
-        .deployContainer(keyDummy, deviceIdDummy, containerIdDummy, undefined, false, true)
+        .deployContainer(keyDummy, deviceIdDummy, realContainerIdDummy, undefined, false, true)
         .then((response) => {
           convertedResponse = JSON.parse(response);
           expect(typeof convertedResponse).to.equal('object');
@@ -195,7 +199,16 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
     });
     it('Should be able to deploy an existing container in verbose with force', () => {
       return netfield
-        .deployContainer(keyDummy, deviceIdDummy, containerIdDummy, undefined, true, true)
+        .deployContainer(keyDummy, deviceIdDummy, realContainerIdDummy, undefined, true, true)
+        .then((response) => {
+          convertedResponse = JSON.parse(response);
+          expect(typeof convertedResponse).to.equal('object');
+          expect(convertedResponse.id).to.equal('somerandomid');
+        });
+    });
+    it('Should be able to deploy an container when a name instead of the id is given', () => {
+      return netfield
+        .deployContainer(keyDummy, deviceIdDummy, displayNameDummy, undefined, true, true)
         .then((response) => {
           convertedResponse = JSON.parse(response);
           expect(typeof convertedResponse).to.equal('object');

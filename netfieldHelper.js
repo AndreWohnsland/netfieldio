@@ -3,8 +3,10 @@ const netfieldio = require('.');
 
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 
+// regex for viable container id:
+const regex = RegExp('([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})');
+
 // Helper Function
-// regex for viable container id: ([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})
 async function getDeviceConfig(configFile) {
   let containerOption = '{}';
   if (configFile !== undefined) {
@@ -102,11 +104,17 @@ module.exports = {
       logger.info('- Config Path:'.padEnd(20) + deviceConfigFile);
       logger.info('- Force Redeploy:'.padEnd(20) + (forceRedeploy ? 'enabled' : 'disabled'));
     }
+    if (regex.test(containerId)) {
+      deploymentContainerId = containerId;
+    } else {
+      logger.info(`Not a valid id: ${containerId}, trying to find id by its name ...`);
+      deploymentContainerId = await netfieldio.getContainerId(apiKey, containerId, verbose);
+    }
 
     let responseCreate = await deployContainerHelper(
       apiKey,
       deviceId,
-      containerId,
+      deploymentContainerId,
       deviceConfigFile,
       forceRedeploy,
       verbose
