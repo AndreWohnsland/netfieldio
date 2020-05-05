@@ -19,6 +19,7 @@ async function getContainerConfig(configFile, tagName) {
   let configData = await netfieldio.getConfigDataFromJson(configFile);
   configData = JSON.parse(configData);
   configData.tagName = tagName;
+  configData.version = tagName;
   return configData;
 }
 
