@@ -42,7 +42,7 @@ function createFormdataObject(ContainerCreateOptions) {
     // mqttTopics not included because it needs to be a list with at least 1
     // items and cannot be empty
     displayName: ContainerCreateOptions.displayName,
-    containerName: ContainerCreateOptions.displayName.toLowerCase().replace(/ /g, '-'),
+    containerName: ContainerCreateOptions.displayName.toLowerCase().replace(/ /g, '-').replace(/\./g, ''),
     version: ContainerCreateOptions.version,
     restartPolicy: ContainerCreateOptions.restartPolicy,
     type: ContainerCreateOptions.type,
