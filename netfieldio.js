@@ -85,35 +85,33 @@ program
 
 // deprecated -> use createAndDeploy with the --force flag instead
 program
-  .command('updateAndRedeployContainer')
-  .alias('udc')
-  .description('Update an existing container, delete and redeploy it to a given device')
+  .command('postMethod')
+  .alias('pm')
+  .description('Post a Method to a given container at a device')
   .requiredOption('-k, --key <key>', 'api key from netfieldio')
-  .requiredOption('-t, --tag <string>', 'version tag of the image')
-  .requiredOption('-c, --container <id>', 'container id of the container to update')
+  .requiredOption('-c, --container <string>', 'name of the container')
+  .requiredOption('-m, --method <string>', 'name of the method to call')
   .requiredOption('-d, --device <id>', 'device id of the device to redeploy to')
-  .requiredOption(
-    '-oc, --config-container <path>',
-    'path to the config.JSON for the container, identical to the create one'
-  )
-  .option('-od, --config-device <path>', 'path to the config.JSON for the device, can be empty')
+  .option('-p, --payload <string>', 'object like string of the argument payload for the method')
   .option('-v, --verbose', 'activate rich output/debugging')
+  .option('-mr, --maxretries <int>', 'amount of retries in case of 404')
+  .option('-si, --sleepinterval <int>', 'time between each retry')
   .action((options) => {
-    netfieldio.updateAndRedeployContainer(
+    netfieldio.postMethod(
       options.key,
       options.device,
       options.container,
-      options.tag,
-      options.configContainer,
-      options.configDevice,
+      options.method,
+      options.payload,
+      options.maxretries,
+      options.sleepinterval,
       options.verbose
     );
   })
   .on('--help', () => {
-    console.log('\nNeed the apikey, url and tag of the image, id of the container and the device.');
-    console.log('Please refer to the docs or the official netfieldio API for the structure of the JSON.');
-    console.log('Not needed values should left blank and must not be deleted in the containerconfig!');
-    console.log('The device config only contains values wich differ from standard container config.\n');
+    console.log('\nNeed the apikey, id of the device, name of the container and a method.');
+    console.log('The payload is dependent from the method and may or may not be required.');
+    console.log('Retries and sleepintervall is for the case the request returns a 404 response.\n');
   });
 
 program.parse(process.argv);

@@ -1,5 +1,7 @@
 const pino = require('pino');
 const netfieldio = require('.');
+const { promisify } = require('util');
+const sleep = promisify(setTimeout);
 
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 
@@ -121,5 +123,40 @@ module.exports = {
       verbose
     );
     return responseCreate;
+  },
+
+  async postMethod(apiKey, deviceId, containerName, methodName, methodPayload, maxRetries, sleepInterval, verbose) {
+    if (methodPayload === undefined) {
+      methodPayload = '{}';
+    }
+    if (maxRetries === undefined) {
+      maxRetries = 1;
+    }
+    if (sleepInterval === undefined) {
+      sleepInterval = 0;
+    }
+    if (verbose) {
+      logger.info('- Device:'.padEnd(20) + deviceId);
+      logger.info('- Container:'.padEnd(20) + containerName);
+      logger.info('- Method:'.padEnd(20) + methodName);
+      logger.info('- Method Payload:'.padEnd(20) + payload);
+      logger.info('- Max Retries:'.padEnd(20) + maxRetries);
+    }
+    var i;
+    for (i = 0; i < maxRetries; i++) {
+      [statusCode, responseBody] = await netfieldio.postMethod(
+        apiKey,
+        deviceId,
+        containerName,
+        methodName,
+        payload,
+        verbose
+      );
+      if (statusCode != 404) {
+        break;
+      }
+      await sleep(sleepInterval * 1000);
+    }
+    return responseBody;
   },
 };
