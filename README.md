@@ -12,7 +12,7 @@
   - [createContainer](#createcontainer)
   - [createAndDeployContainer](#createanddeploycontainer)
   - [deployContainer](#deploycontainer)
-  - [updateAndRedeployContainer](#updateandredeploycontainer)
+  - [postMethod](#postmethod)
 - [Examples](#examples)
 - [Format of Configs](#format-of-configs)
 
@@ -85,29 +85,27 @@ Please refer to the docs or the official netfieldio API for the structure of the
 Only contains values wich differ from standard container config.
 ```
 
-### updateAndRedeployContainer
+### postMethod
 
 ```
-Usage: netfieldio updateAndRedeployContainer|udc [options]
+Usage: netfieldio postMethod|pm [options]
 
-WARNING: Deprecated, use createAndDeployContainer with the --force flag instead. Will removed with v1.2.
-
-Update an existing container, delete and redeploy it to a given device
+Post a Method to a given container at a device
 
 Options:
-  -k, --key <key>                 api key from netfieldio
-  -t, --tag <string>              version tag of the image
-  -c, --container <id>            container id of the container to update
-  -d, --device <id>               device id of the device to redeploy to
-  -oc, --config-container <path>  path to the config.JSON for the container, identical to the create one
-  -od, --config-device <path>     path to the config.JSON for the device, can be empty
-  -v, --verbose                   activate rich output/debugging
-  -h, --help                      display help for command
+  -k, --key <key>             api key from netfieldio
+  -c, --container <string>    name of the container
+  -m, --method <string>       name of the method to call
+  -d, --device <id>           device id of the device to redeploy to
+  -p, --payload <string>      object like string of the argument payload for the method
+  -v, --verbose               activate rich output/debugging
+  -mr, --maxretries <int>     amount of retries in case of 404
+  -si, --sleepinterval <int>  time between each retry
+  -h, --help                  display help for command
 
-Need the apikey, url and tag of the image, id of the container and the device.
-Please refer to the docs or the official netfieldio API for the structure of the JSON.
-Not needed values should left blank and must not be deleted in the containerconfig!
-The device config only contains values wich differ from standard container config.
+Need the apikey, id of the device, name of the container and a method.
+The payload is dependent from the method and may or may not be required.
+Retries and sleepintervall is for the case the request returns a 404 response.
 ```
 
 # Examples
