@@ -122,38 +122,4 @@ module.exports = {
     );
     return responseCreate;
   },
-
-  // deprecated -> createAndDeployContainer with forceRedeploy will do the same will removed with v1.2
-  async updateAndRedeployContainer(
-    apiKey,
-    deviceId,
-    containerId,
-    tagName,
-    containerConfigFile,
-    deviceConfigFile,
-    verbose
-  ) {
-    if (verbose) {
-      logger.info('- Release:'.padEnd(20) + tagName);
-      logger.info('- Device:'.padEnd(20) + deviceId);
-      logger.info('- Container:'.padEnd(20) + containerId);
-      logger.info('- Config Container:'.padEnd(20) + containerConfigFile);
-      logger.info('- Config Device:'.padEnd(20) + deviceConfigFile);
-    }
-
-    let containerOption = await getDeviceConfig(deviceConfigFile);
-    let configData = await getContainerConfig(containerConfigFile, tagName);
-
-    let responseUpdate = await netfieldio.updateContainer(apiKey, containerId, configData, verbose);
-    let responseDelete = await netfieldio.deleteDeviceContainer(apiKey, deviceId, containerId, verbose);
-    let responseCreate = await netfieldio.createDeviceContainer(
-      apiKey,
-      deviceId,
-      containerId,
-      containerOption,
-      verbose
-    );
-
-    return [responseUpdate, responseDelete, responseCreate];
-  },
 };
