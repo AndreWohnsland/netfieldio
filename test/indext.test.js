@@ -319,21 +319,21 @@ describe('Testing the base funktion of the package', () => {
       nock(`${baseUrl}/${baseVersion}`)
         .post(`/devices/${deviceIdDummy}_wrong/methods`)
         .reply(404, 'Device not found')
-        .post(`/devices/${deviceIdDummy}/methods`)
+        .post(`/devices/${deviceIdDummy}_wrongHeader/methods`)
         .reply(404, 'Not found')
         .post(`/devices/wrong/url/methods`)
         .replyWithError('Invalid url');
     });
     it('Should return error Code 404 if the Method Name does not exists', () => {
       return netfield
-        .postMethod(keyDummy, deviceIdDummy, 'containerName', 'wrongMethod', '{}', true)
+        .postMethod(keyDummy, `${deviceIdDummy}_wrongHeader`, 'containerName', 'wrongMethod', '{}', true)
         .then((response) => {
           expect(response[0]).to.equal(404);
         });
     });
     it('Should return error Code 404 if the Container Name does not exists', () => {
       return netfield
-        .postMethod(keyDummy, deviceIdDummy, 'wrongcontainerName', 'methodName', '{}', true)
+        .postMethod(keyDummy, `${deviceIdDummy}_wrongHeader`, 'wrongcontainerName', 'methodName', '{}', true)
         .then((response) => {
           expect(response[0]).to.equal(404);
         });

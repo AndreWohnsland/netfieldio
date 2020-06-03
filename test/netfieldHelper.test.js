@@ -46,7 +46,11 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
       .post(`/devices/${deviceIdDummy + '_exist'}/containers/${containerIdDummy}`)
       .reply(400, 'Container already exists!')
       .get('/containers?page=1&limit=50&sortBy=id&sortOrder=asc')
-      .reply(200, getContainerIdResponse);
+      .reply(200, getContainerIdResponse)
+      .post(`/devices/${deviceIdDummy}/methods`)
+      .reply(200, 'Filler for now')
+      .post(`/devices/${deviceIdDummy}_wrong/methods`)
+      .reply(404, 'Not found');
 
     mock({
       'path/to/fake/dir': {
@@ -58,9 +62,11 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
       },
     });
   });
+
   afterEach(() => {
     mock.restore();
   });
+
   describe('createContainer', () => {
     it('Should be able to be executed on an existing container', () => {
       return netfield
@@ -99,6 +105,7 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
         });
     });
   });
+
   describe('createAndDeployContainer', () => {
     it('Should be able to create and deploy a non existing container with force on', () => {
       return netfield
@@ -169,6 +176,7 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
         });
     });
   });
+
   describe('deployContainer', () => {
     it('Should be able to deploy a non existing container', () => {
       return netfield
@@ -213,6 +221,37 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
           convertedResponse = JSON.parse(response);
           expect(typeof convertedResponse).to.equal('object');
           expect(convertedResponse.id).to.equal('somerandomid');
+        });
+    });
+  });
+
+  describe('postMethod', () => {
+    it('Should be able retry if response is a 404', () => {
+      return netfield
+        .postMethod(keyDummy, `${deviceIdDummy}_wrong`, 'containerName', 'methodName', '{}', 2, 0, true)
+        .then((response) => {
+          expect(response[0]).to.equal(404);
+        });
+    });
+    it('Should be able to run postMethod', () => {
+      return netfield
+        .postMethod(keyDummy, deviceIdDummy, 'containerName', 'methodName', '{}', 2, 0, false)
+        .then((response) => {
+          expect(response[0]).to.equal(200);
+        });
+    });
+    it('Should be able to run postMethod with undefined parameters', () => {
+      return netfield
+        .postMethod(keyDummy, deviceIdDummy, 'containerName', 'methodName', undefined, undefined, undefined, false)
+        .then((response) => {
+          expect(response[0]).to.equal(200);
+        });
+    });
+    it('Should be able to run postMethod in verbose mode', () => {
+      return netfield
+        .postMethod(keyDummy, deviceIdDummy, 'containerName', 'methodName', '{}', 2, 0, true)
+        .then((response) => {
+          expect(response[0]).to.equal(200);
         });
     });
   });
