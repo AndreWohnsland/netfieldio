@@ -7,8 +7,8 @@ const apiBaseUrl = 'https://api.netfield.io';
 const apiVersion = 'v1';
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 
-function checkForRightResponse(response) {
-  if (response.statusCode >= 400) {
+function checkForRightResponse(response, errorList = [400, 401, 402, 403, 404]) {
+  if (errorList.includes(response.statusCode)) {
     // throw new Error(`Connection Error. Status Code ${response.statusCode}`);
     // Best practise seems to be 1) use process.exitCode = 1, 2) throw uncaught error
     logger.error(`An Error occured with the Status Code: ${response.statusCode} and the message: ${response.body}`);
@@ -181,6 +181,33 @@ module.exports = {
     }
     verbosePrint(verbose, `Container not found for name: ${containerName}`);
     return containerId;
+  },
+
+  postMethod(apiKey, deviceId, containerName, methodName, methodPayload, verbose) {
+    return new Promise((resolve, reject) => {
+      bodyObject = {
+        containerName: containerName,
+        methodName: methodName,
+        methodPayload: JSON.parse(methodPayload),
+      };
+      bodyJson = JSON.stringify(bodyObject);
+
+      var options = {
+        method: 'POST',
+        url: `${apiBaseUrl}/${apiVersion}/devices/${deviceId}/methods`,
+        headers: {
+          'Content-Type': ['application/json', 'text/plain'],
+          Authorization: apiKey,
+        },
+        body: bodyJson,
+      };
+      request(options, (error, response) => {
+        if (error) return reject(new Error(error.message));
+        verboseResponsePrint(verbose, 'Create Container Body: ', response);
+        checkForRightResponse(response, (errorList = [400, 401, 402, 403]));
+        resolve([response.statusCode, response.body]);
+      });
+    });
   },
 
   async getConfigDataFromJson(filePath) {
