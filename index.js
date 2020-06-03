@@ -196,7 +196,7 @@ module.exports = {
         method: 'POST',
         url: `${apiBaseUrl}/${apiVersion}/devices/${deviceId}/methods`,
         headers: {
-          'Content-Type': ['application/json', 'text/plain'],
+          'Content-Type': 'application/json',
           Authorization: apiKey,
         },
         body: bodyJson,
