@@ -3,7 +3,11 @@
 const { program } = require('commander');
 const netfieldio = require('./netfieldHelper');
 
-program.version('0.0.1');
+program.version('1.2.0');
+
+function myParseInt(value, dummyPrevious) {
+  return parseInt(value);
+}
 
 program
   .command('createContainer')
@@ -94,8 +98,8 @@ program
   .requiredOption('-d, --device <id>', 'device id of the device to redeploy to')
   .option('-p, --payload <string>', 'object like string of the argument payload for the method')
   .option('-v, --verbose', 'activate rich output/debugging')
-  .option('-mr, --maxretries <int>', 'amount of retries in case of 404')
-  .option('-si, --sleepinterval <int>', 'time between each retry')
+  .option('-mr, --maxretries <int>', 'amount of retries in case of 404', myParseInt)
+  .option('-si, --sleepinterval <int>', 'time between each retry', myParseInt)
   .action((options) => {
     netfieldio.postMethod(
       options.key,

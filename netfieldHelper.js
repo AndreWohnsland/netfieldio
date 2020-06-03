@@ -139,24 +139,31 @@ module.exports = {
       logger.info('- Device:'.padEnd(20) + deviceId);
       logger.info('- Container:'.padEnd(20) + containerName);
       logger.info('- Method:'.padEnd(20) + methodName);
-      logger.info('- Method Payload:'.padEnd(20) + payload);
+      logger.info('- Method Payload:'.padEnd(20) + methodPayload);
       logger.info('- Max Retries:'.padEnd(20) + maxRetries);
     }
     var i;
-    for (i = 0; i < maxRetries; i++) {
+    for (i = 1; i <= maxRetries; i++) {
       [statusCode, responseBody] = await netfieldio.postMethod(
         apiKey,
         deviceId,
         containerName,
         methodName,
-        payload,
+        methodPayload,
         verbose
       );
       if (statusCode != 404) {
         break;
       }
-      await sleep(sleepInterval * 1000);
+      if (verbose) {
+        logger.info(
+          `Try ${i} of ${maxRetries}: Got a 404 respone. Waitng for ${sleepInterval} and retrying again if not last try.`
+        );
+      }
+      if (i < maxRetries) {
+        await sleep(sleepInterval * 1000);
+      }
     }
-    return responseBody;
+    return [statusCode, responseBody];
   },
 };
