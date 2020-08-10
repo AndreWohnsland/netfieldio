@@ -1,6 +1,6 @@
 {
   "name": "netfieldio",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Node.js CLI wrapper for api.netfield.io ",
   "main": "index.js",
   "bin": {

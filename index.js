@@ -13,7 +13,9 @@ function checkForRightResponse(response, errorList = [400, 401, 402, 403, 404]) 
     // Best practise seems to be 1) use process.exitCode = 1, 2) throw uncaught error
     logger.error(`An Error occured with the Status Code: ${response.statusCode} and the message: ${response.body}`);
     process.exitCode = 1;
+    return false;
   }
+  return true;
 }
 
 function verboseResponsePrint(verbose, header, response) {
@@ -206,6 +208,31 @@ module.exports = {
         verboseResponsePrint(verbose, 'Create Container Body: ', response);
         checkForRightResponse(response, (errorList = [400, 401, 402, 403]));
         resolve([response.statusCode, response.body]);
+      });
+    });
+  },
+
+  getGroupDevices(apiKey, groupId, verbose) {
+    return new Promise((resolve, reject) => {
+      var options = {
+        method: 'GET',
+        url: `${apiBaseUrl}/${apiVersion}/groups/${groupId}`,
+        headers: {
+          Authorization: apiKey,
+          'Content-Type': 'application/json',
+        },
+      };
+      request(options, (error, response) => {
+        if (error) return reject(new Error(error.message));
+        verbosePrint(verbose, 'Get Group Device Body: ', response);
+        if (!checkForRightResponse(response)) return resolve([]);
+        information = JSON.parse(response.body);
+        deviceList = information.items;
+        let deviceInformation = [];
+        for (let device of deviceList) {
+          deviceInformation.push([device.id, device.name]);
+        }
+        resolve(deviceInformation);
       });
     });
   },

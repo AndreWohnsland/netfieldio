@@ -107,12 +107,7 @@ module.exports = {
       logger.info('- Config Path:'.padEnd(20) + deviceConfigFile);
       logger.info('- Force Redeploy:'.padEnd(20) + (forceRedeploy ? 'enabled' : 'disabled'));
     }
-    if (regex.test(containerId)) {
-      deploymentContainerId = containerId;
-    } else {
-      logger.info(`Not a valid id: ${containerId}, trying to find id by its name ...`);
-      deploymentContainerId = await netfieldio.getContainerId(apiKey, containerId, verbose);
-    }
+    let deploymentContainerId = await getContainerIdHelper(containerId, apiKey, verbose);
 
     let responseCreate = await deployContainerHelper(
       apiKey,
@@ -123,6 +118,38 @@ module.exports = {
       verbose
     );
     return responseCreate;
+  },
+
+  async deployContainerOnGroup(apiKey, groupId, containerId, deviceConfigFile, forceRedeploy, verbose) {
+    if (verbose) {
+      logger.info('- Group:'.padEnd(20) + groupId);
+      logger.info('- Container:'.padEnd(20) + containerId);
+      logger.info('- Config Path:'.padEnd(20) + deviceConfigFile);
+      logger.info('- Force Redeploy:'.padEnd(20) + (forceRedeploy ? 'enabled' : 'disabled'));
+    }
+    let deploymentContainerId = await getContainerIdHelper(containerId, apiKey, verbose);
+    if (deploymentContainerId == null) {
+      logger.error(`Could not find Container: ${containerId}, canceling deployment ...`);
+      process.exitCode = 1;
+      return false;
+    }
+
+    let deviceIdList = await netfieldio.getGroupDevices(apiKey, groupId, verbose);
+    let responseCreate = null;
+    for (let data of deviceIdList) {
+      let deviceId = data[0];
+      let deviceName = data[1];
+      if (verbose) logger.info(`Deploying on device: ${deviceName} with the id: ${deviceId}`);
+      responseCreate = await deployContainerHelper(
+        apiKey,
+        deviceId,
+        deploymentContainerId,
+        deviceConfigFile,
+        forceRedeploy,
+        verbose
+      );
+    }
+    return true;
   },
 
   async postMethod(apiKey, deviceId, containerName, methodName, methodPayload, maxRetries, sleepInterval, verbose) {
@@ -157,7 +184,7 @@ module.exports = {
       }
       if (verbose) {
         logger.info(
-          `Try ${i} of ${maxRetries}: Got a 404 respone. Waitng for ${sleepInterval} and retrying again if not last try.`
+          `Try ${i} of ${maxRetries}: Got a 404 respone. Waiting for ${sleepInterval} and retrying again if not last try.`
         );
       }
       if (i < maxRetries) {
@@ -167,3 +194,13 @@ module.exports = {
     return [statusCode, responseBody];
   },
 };
+
+async function getContainerIdHelper(containerId, apiKey, verbose) {
+  if (regex.test(containerId)) {
+    deploymentContainerId = containerId;
+  } else {
+    logger.info(`Not a valid id: ${containerId}, trying to find id by its name ...`);
+    deploymentContainerId = await netfieldio.getContainerId(apiKey, containerId, verbose);
+  }
+  return deploymentContainerId;
+}

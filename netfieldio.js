@@ -2,8 +2,9 @@
 
 const { program } = require('commander');
 const netfieldio = require('./netfieldHelper');
+const { deployContainer, deployContainerOnGroup } = require('./netfieldHelper');
 
-program.version('1.2.0');
+program.version('1.2.1');
 
 function myParseInt(value, dummyPrevious) {
   return parseInt(value);
@@ -87,7 +88,35 @@ program
     console.log('Only contains values wich differ from standard container config.\n');
   });
 
-// deprecated -> use createAndDeploy with the --force flag instead
+program
+  .command('deployContainerOnGroup')
+  .alias('dcog')
+  .description('Deploy an existing container to every device in a group')
+  .requiredOption('-k, --key <key>', 'api key from netfieldio')
+  .requiredOption('-c, --container <string>', 'name of the container')
+  .requiredOption('-g, --group <id>', 'group id of the group to deploy to')
+  .option(
+    '-od, --config-device <path>',
+    'path to the config.JSON, only if other parameters than default container options'
+  )
+  .option('-f --force', 'enforcing deployment of container (deletes existing one)')
+  .option('-v, --verbose', 'activate rich output/debugging')
+  .action((options) => {
+    netfieldio.deployContainerOnGroup(
+      options.key,
+      options.group,
+      options.container,
+      options.configDevice,
+      options.force,
+      options.verbose
+    );
+  })
+  .on('--help', () => {
+    console.log('\nNeed the apikey, id of the group, name of the container.');
+    console.log('Please refer to the docs or the official netfieldio API for the structure of the JSON.');
+    console.log('Only contains values wich differ from standard container config.\n');
+  });
+
 program
   .command('postMethod')
   .alias('pm')
