@@ -12,6 +12,7 @@
   - [createContainer](#createcontainer)
   - [createAndDeployContainer](#createanddeploycontainer)
   - [deployContainer](#deploycontainer)
+  - [deployContainerOnGroup](#deploycontainerongroup)
   - [postMethod](#postmethod)
 - [Examples](#examples)
 - [Format of Configs](#format-of-configs)
@@ -81,6 +82,27 @@ Options:
   -h, --help                   display help for command
 
 Need the apikey, id of the container and the device.
+Please refer to the docs or the official netfieldio API for the structure of the JSON.
+Only contains values wich differ from standard container config.
+```
+
+### deployContainerOnGroup
+
+```
+Usage: netfieldio deployContainerOnGroup|dcog [options]
+
+Deploy an existing container to every device in a group
+
+Options:
+  -k, --key <key>              api key from netfieldio
+  -c, --container <string>     name of the container
+  -g, --group <id>             group id of the group to deploy to
+  -od, --config-device <path>  path to the config.JSON, only if other parameters than default container options
+  -f --force                   enforcing deployment of container (deletes existing one)
+  -v, --verbose                activate rich output/debugging
+  -h, --help                   display help for command
+
+Need the apikey, id of the group, name of the container.
 Please refer to the docs or the official netfieldio API for the structure of the JSON.
 Only contains values wich differ from standard container config.
 ```
