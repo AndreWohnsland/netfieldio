@@ -14,6 +14,7 @@ const createResponse = require('./mock/createResponse');
 const updateResponse = require('./mock/updateResponse');
 const createDeviceResponse = require('./mock/createDeviceResponse');
 const getContainerIdResponse = require('./mock/getContainerIdResponse');
+const getGroupResponse = require('./mock/getGroupResonse');
 
 var privateFunctionIndex = rewire('../index.js');
 
@@ -348,6 +349,27 @@ describe('Testing the base funktion of the package', () => {
     it('Should return error if wrong url', () => {
       return netfield.postMethod(keyDummy, 'wrong/url', 'containerName', 'methodName', '{}', false).catch((error) => {
         expect(error.message).to.equal('Invalid url');
+      });
+    });
+  });
+
+  describe('Testing getGroupDevices methods', () => {
+    beforeEach(() => {
+      nock(`${baseUrl}/${baseVersion}`)
+        .get(`/groups/1`)
+        .reply(200, getGroupResponse)
+        .get(`/groups/2`)
+        .reply(404, 'Not found');
+    });
+    it('Should return the List of devices when successfull', () => {
+      return netfield.getGroupDevices(keyDummy, 1, true).then((response) => {
+        expect(response[0][0]).to.equal('idOfFirstDevice');
+        expect(response[1][1]).to.equal('nameOfSecondDevice');
+      });
+    });
+    it('Should return empty List of devices when getting 4xx response', () => {
+      return netfield.getGroupDevices(keyDummy, 2, true).then((response) => {
+        expect(response.length).to.equal(0);
       });
     });
   });

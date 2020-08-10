@@ -13,6 +13,7 @@ const createResponse = require('./mock/createResponse');
 const updateResponse = require('./mock/updateResponse');
 const createDeviceResponse = require('./mock/createDeviceResponse');
 const getContainerIdResponse = require('./mock/getContainerIdResponse');
+const getGroupResponse = require('./mock/getGroupResonse');
 
 var privateFunctionhelper = rewire('./../netfieldHelper.js');
 getDeviceConfig = privateFunctionhelper.__get__('getDeviceConfig');
@@ -43,6 +44,10 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
       .reply(201, createDeviceResponse)
       .post(`/devices/${deviceIdDummy}/containers/${realContainerIdDummy}`)
       .reply(201, createDeviceResponse)
+      .post(`/devices/idOfFirstDevice/containers/${realContainerIdDummy}`)
+      .reply(201, '')
+      .post(`/devices/idOfSecondDevice/containers/${realContainerIdDummy}`)
+      .reply(201, '')
       .post(`/devices/${deviceIdDummy + '_exist'}/containers/${containerIdDummy}`)
       .reply(400, 'Container already exists!')
       .get('/containers?page=1&limit=50&sortBy=id&sortOrder=asc')
@@ -50,7 +55,9 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
       .post(`/devices/${deviceIdDummy}/methods`)
       .reply(200, 'Filler for now')
       .post(`/devices/${deviceIdDummy}_wrong/methods`)
-      .reply(404, 'Not found');
+      .reply(404, 'Not found')
+      .get(`/groups/4`)
+      .reply(200, getGroupResponse);
 
     mock({
       'path/to/fake/dir': {
@@ -253,6 +260,28 @@ describe('Testing the Helper Functions which combine multiple index.js ones', ()
         .then((response) => {
           expect(response[0]).to.equal(200);
         });
+    });
+  });
+
+  describe('deployContainerOnGroup', () => {
+    it('Should be able to carry out process if container exists in verbose', () => {
+      return netfield
+        .deployContainerOnGroup(keyDummy, 4, realContainerIdDummy, undefined, false, true)
+        .then((response) => {
+          expect(response).to.equal(true);
+        });
+    });
+    it('Should be able to carry out process if container exists in not verbose', () => {
+      return netfield
+        .deployContainerOnGroup(keyDummy, 4, realContainerIdDummy, undefined, false, false)
+        .then((response) => {
+          expect(response).to.equal(true);
+        });
+    });
+    it('Should be terminate if container does not exists', () => {
+      return netfield.deployContainerOnGroup(keyDummy, 4, 'wrong name', undefined, false, true).then((response) => {
+        expect(response).to.equal(false);
+      });
     });
   });
 });
